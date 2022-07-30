@@ -1,0 +1,46 @@
+SELECT 
+mc.last_name,
+mc.first_name,
+mc.phone,
+mc.email,
+mc.gender,
+mc.birthday,
+prof.prof_id,
+z.city,
+z.province,
+s.status,
+"Seeking".seeking,
+"Interest".interest
+
+FROM "My_contacts" AS mc
+
+INNER JOIN "Profession" AS prof
+ON mc.prof_id = prof.prof_id
+
+INNER JOIN "Zip_code" AS z
+ON mc.zip_code = z.zip_code
+
+INNER JOIN "Status" AS s
+ON mc.status_id = s.status_id
+
+--INTERESTS INNER JOIN--
+
+--SELECT *
+--FROM my_contacts AS mc
+
+INNER JOIN "Contact_interest"
+ON mc.contact_id = "Contact_interest".contacts_id
+
+INNER JOIN "Interest"
+ON "Contact_interest".interest_id = "Interest".interest_id
+
+--SEEKING INNER JOIN
+
+--SELECT *
+--FROM my_contacts AS mc
+
+INNER JOIN "contact_seeking"
+ON mc.contact_id = "contact_seeking".contact_id
+
+INNER JOIN "Seeking"
+ON "contact_seeking".seeking_id = "Seeking".seeking_id;

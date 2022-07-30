@@ -55,7 +55,7 @@ DROP TABLE "Contact_interest"
 
 
 SELECT * FROM "My_contacts"
-INNER JOIN "Contact_interest" ON My_contacts.contact_id = "Contact_interest.contact_id";
+INNER JOIN "Contact_interest" ON "My_contacts".contact_id = "Contact_interest".contact_id;
 
 --select * from "My_contacts"
 INNER JOIN "Profession" ON "My_contacts".prof_id = "Profession".prof_id;
@@ -78,7 +78,52 @@ INNER JOIN "contact_seeking" ON "My_contacts".contact_id = "contact_seeking".con
 INNER JOIN "Seeking" ON "contact_seeking".seeking_id = "Seeking".seeking_id;
 
 
+SELECT 
+mc.last_name,
+mc.first_name,
+mc.phone,
+mc.email,
+mc.gender,
+mc.birthday,
+prof.profession,
+z.city1,
+z.province,
+s.status,
+seeking.seeking,
+interests.interests
 
+FROM my_contacts AS mc
+
+INNER JOIN profession AS prof
+ON mc.prof_id = prof.prof_id
+
+INNER JOIN zip_code AS z
+ON mc.zip_code = z.zip_code
+
+INNER JOIN status AS s
+ON mc.status_id = s.status_id
+
+--INTERESTS INNER JOIN--
+
+--SELECT *
+--FROM my_contacts AS mc
+
+INNER JOIN contact_interest
+ON mc.contact_id = contact_interest.contact_id
+
+INNER JOIN interests
+ON contact_interest.interest_id = interests.interest_id
+
+--SEEKING INNER JOIN
+
+--SELECT *
+--FROM my_contacts AS mc
+
+INNER JOIN contact_seeking
+ON mc.contact_id = contact_seeking.contact_id
+
+INNER JOIN seeking
+ON contact_seeking.seeking_id = seeking.seeking_id;
 
 
 
@@ -157,14 +202,16 @@ DROP TABLE "Profession"
 CREATE TABLE IF NOT EXISTS public."Zip_code"
 (
     zip_code bigint NOT NULL,
-    CHECK (zip_code < 9999),
+    CHECK (zip_code < 9999 AND zip_code > 999),
     city character varying(50) NOT NULL,
     province character varying(20) NOT NULL,
     PRIMARY KEY (zip_code)
 );
+DROP TABLE "Zip_code"
+
 
 INSERT INTO "Zip_code"
-VALUES('1111','Johannesburg, Pretoria','Gauteng'),
+VALUES('311','Johannesburg, Pretoria','Gauteng');
       ('2222','Polokwane, Giyani','Limpopo'),
       ('3333','Knysna, Cape town','Western cape'), 
       ('4444','Durban, Ulundi','Kwa-zulu-natal'),
@@ -173,6 +220,7 @@ VALUES('1111','Johannesburg, Pretoria','Gauteng'),
       ('7777','Bloemfontein, Welkom','Free-state'),
       ('8888','Mbombela,Secunda','Mpumalanga'),
       ('9990','East London,Port Elizabeth','Eastern cape');
+       
   
 SELECT * FROM "Zip_code"
 DROP TABLE "Zip_code"

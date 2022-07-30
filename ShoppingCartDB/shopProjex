@@ -1,0 +1,91 @@
+BEGIN;
+
+
+CREATE TABLE IF NOT EXISTS public.product$
+(
+    product_id serial NOT NULL,
+    description character varying(15) NOT NULL,
+    price numeric(9, 2) NOT NULL,
+    CONSTRAINT product_table PRIMARY KEY (product_id)
+);
+DROP TABLE product$;
+
+INSERT INTO product$
+VALUES ('1','BMW M2','220000'),
+       ('2','BMW M3','350000'),
+       ('3','Mercedes c63','400000'),
+       ('4','Audi RS3','460000'),
+       ('5','Ferrari pista','980000'),
+       ('6','Porsche 911gt3','1000000');
+
+SELECT * FROM product$;
+
+
+
+CREATE TABLE IF NOT EXISTS public.cart
+(
+    product_id serial NOT NULL,
+    quantity numeric(1,0) NOT NULL,
+    PRIMARY KEY (product_id, quantity)
+);
+DROP TABLE cart;
+
+
+
+INSERT INTO cart
+VALUES (1,2),
+       (3,3);
+       (5,4),
+       (6,1);
+SELECT * FROM cart;
+
+
+--Displaying the cart
+SELECT description,quantity,price,quantity*price AS subtotal FROM cart
+INNER JOIN product$ ON cart.product_id = product$.product_id;
+
+--ADDING TO CART
+
+UPDATE cart SET cart.quantity = cart.quantity+1
+WHERE EXISTS (SELECT * FROM cart WHERE cart.product_id=1)
+AND cart.product_id=1;
+
+SELECT description,quantity,price,quantity*price AS subtotal FROM cart
+INNER JOIN product$ ON cart.product_id = product$.product_id;
+
+-- If quantity = 0 add product
+INSERT INTO cart (product_id, quantity)
+SELECT 1,1
+WHERE NOT EXISTS (SELECT 1 FROM cart WHERE product_id = 1);
+--show cart
+ SELECT description,quantity,price,quantity*price AS subtotal FROM cart
+ INNER JOIN product$ ON cart.product_id = product$.product_id;
+
+--Removing itemm
+
+UPDATE cart SET cart.quantity = cart.quantity-1
+WHERE EXISTS (SELECT * FROM cart WHERE cart.product_id=1)
+AND cart.product_id=1;
+SELECT description,quantity,price,quantity*price AS subtotal FROM cart
+ INNER JOIN product$ ON cart.product_id = product$.product_id;
+
+--if quantity =0 in the cart
+DELETE FROM cart WHERE cart.quantity = 0;
+--showing cart
+SELECT description,quantity,price,quantity*price AS subtotal FROM cart
+ INNER JOIN product$ ON cart.product_id = product$.product_id;
+
+--GrandTotal
+
+SELECT SUM(cart.quantity * product$.price) as grandtotal FROM cart
+INNER JOIN product$ on product$.product_id = cart.product_id;
+
+
+ALTER TABLE IF EXISTS public.product_table
+    ADD FOREIGN KEY (product_id)
+    REFERENCES public.cart_table (product_id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+END;
